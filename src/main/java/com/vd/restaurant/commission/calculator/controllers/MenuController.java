@@ -3,7 +3,6 @@ package com.vd.restaurant.commission.calculator.controllers;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,20 +16,23 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vd.restaurant.commission.calculator.entities.MenuItem;
 import com.vd.restaurant.commission.calculator.services.MenuItemService;
 
+import lombok.AllArgsConstructor;
+
 @RestController
 @RequestMapping("/menu")
+@AllArgsConstructor
 public class MenuController {
 
-    @Autowired
     private MenuItemService menuItemService;
+    
 
-    @PostMapping("/add")
+	@PostMapping
     public ResponseEntity<MenuItem> addMenuItem(@RequestBody MenuItem menuItem) {
         MenuItem createdMenuItem = menuItemService.addMenuItem(menuItem);
         return new ResponseEntity<>(createdMenuItem, HttpStatus.CREATED);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<MenuItem>> getAllMenuItems() {
         List<MenuItem> menuItems = menuItemService.getAllMenuItems();
         return new ResponseEntity<>(menuItems, HttpStatus.OK);

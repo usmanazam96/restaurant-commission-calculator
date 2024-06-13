@@ -3,13 +3,13 @@ package com.vd.restaurant.commission.calculator.controllers;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,20 +18,22 @@ import com.vd.restaurant.commission.calculator.entities.Order;
 import com.vd.restaurant.commission.calculator.entities.OrderItem;
 import com.vd.restaurant.commission.calculator.services.OrderService;
 
+import lombok.AllArgsConstructor;
+
 @RestController
 @RequestMapping("/orders")
+@AllArgsConstructor
 public class OrderController {
 
-    @Autowired
     private OrderService orderService;
-
-    @PostMapping("/create")
+    
+    @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         Order createdOrder = orderService.createOrder(order);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<Order>> getAllOrders() {
         List<Order> orders = orderService.getAllOrders();
         return new ResponseEntity<>(orders, HttpStatus.OK);
@@ -59,7 +61,7 @@ public class OrderController {
         }
     }
 
-    @PostMapping("/{orderId}/addItem")
+    @PutMapping("/{orderId}/add-item")
     public ResponseEntity<Order> addOrderItem(@PathVariable Long orderId, @RequestBody OrderItem orderItem) {
         Order updatedOrder = orderService.addOrderItem(orderId, orderItem);
         if (updatedOrder != null) {
@@ -69,7 +71,7 @@ public class OrderController {
         }
     }
 
-    @PostMapping("/{orderId}/removeItem/{orderItemId}")
+    @DeleteMapping("/{orderId}/remove-item/{orderItemId}")
     public ResponseEntity<Order> removeOrderItem(@PathVariable Long orderId, @PathVariable Long orderItemId) {
         Order updatedOrder = orderService.removeOrderItem(orderId, orderItemId);
         if (updatedOrder != null) {

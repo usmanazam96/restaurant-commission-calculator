@@ -23,6 +23,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.vd.restaurant.commission.calculator.entities.MenuItem;
 import com.vd.restaurant.commission.calculator.entities.Order;
 import com.vd.restaurant.commission.calculator.entities.OrderItem;
+import com.vd.restaurant.commission.calculator.exceptions.InvalidStockException;
+import com.vd.restaurant.commission.calculator.exceptions.MenuItemNotFoundException;
 import com.vd.restaurant.commission.calculator.exceptions.OrderNotFoundException;
 import com.vd.restaurant.commission.calculator.repositories.OrderRepository;
 
@@ -61,6 +63,38 @@ public class OrderServiceTest {
         assertEquals(order, result);
         verify(menuItemService).updateMenuItemStock(1L, -5);
     }
+    
+    @Test
+    public void testCreateOrderInsufficientStock() {
+        Order order = new Order();
+        OrderItem orderItem = new OrderItem();
+        MenuItem menuItem = new MenuItem();
+        menuItem.setId(1L);
+        menuItem.setStock(3);
+        orderItem.setMenuItem(menuItem);
+        orderItem.setQuantity(5);
+        order.getItems().add(orderItem);
+
+        when(menuItemService.updateMenuItemStock(1L, -5)).thenThrow(new InvalidStockException("Insufficient stock"));
+
+        assertThrows(InvalidStockException.class, () -> orderService.createOrder(order));
+    }
+    
+    @Test
+    public void testCreateOrderWithNonExistentMenuItem() {
+        Order order = new Order();
+        OrderItem orderItem = new OrderItem();
+        MenuItem menuItem = new MenuItem();
+        menuItem.setId(1L);
+        orderItem.setMenuItem(menuItem);
+        orderItem.setQuantity(5);
+        order.getItems().add(orderItem);
+
+        when(menuItemService.updateMenuItemStock(1L, -5)).thenThrow(new MenuItemNotFoundException("Menu item not found"));
+
+        assertThrows(MenuItemNotFoundException.class, () -> orderService.createOrder(order));
+    }
+
 
     @Test
     public void testGetAllOrders() {
@@ -80,6 +114,14 @@ public class OrderServiceTest {
         assertTrue(result.isPresent());
         assertEquals(order, result.get());
     }
+    
+	@Test
+	public void testGetOrderByNonExistentId() {
+		when(orderRepository.findById(1L)).thenReturn(Optional.empty());
+
+		Optional<Order> result = orderService.getOrderById(1L);
+		assertFalse(result.isPresent());
+	}
 
     @Test
     public void testDeleteOrder() {
@@ -123,7 +165,50 @@ public class OrderServiceTest {
         assertTrue(result.getItems().contains(orderItem));
         verify(menuItemService).updateMenuItemStock(1L, -5);
     }
+    
+    @Test
+    public void testAddOrderItemInsufficientStock() {
+        Order order = new Order();
+        OrderItem orderItem = new OrderItem();
+        MenuItem menuItem = new MenuItem();
+        menuItem.setId(1L);
+        menuItem.setStock(3);
+        orderItem.setMenuItem(menuItem);
+        orderItem.setQuantity(5);
 
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(menuItemService.updateMenuItemStock(1L, -5)).thenThrow(new InvalidStockException("Insufficient stock"));
+
+        assertThrows(InvalidStockException.class, () -> orderService.addOrderItem(1L, orderItem));
+    }
+    
+    @Test
+    public void testAddOrderItemWithInvalidMenuItem() {
+        Order order = new Order();
+        OrderItem orderItem = new OrderItem();
+        MenuItem menuItem = new MenuItem();
+        menuItem.setId(1L);
+        orderItem.setMenuItem(menuItem);
+        orderItem.setQuantity(5);
+
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(menuItemService.updateMenuItemStock(1L, -5)).thenThrow(new MenuItemNotFoundException("Menu item not found"));
+
+        assertThrows(MenuItemNotFoundException.class, () -> orderService.addOrderItem(1L, orderItem));
+    }
+    
+    @Test
+    public void testAddOrderItemToNonExistentOrder() {
+        OrderItem orderItem = new OrderItem();
+        MenuItem menuItem = new MenuItem();
+        menuItem.setId(1L);
+        orderItem.setMenuItem(menuItem);
+        orderItem.setQuantity(5);
+
+        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(OrderNotFoundException.class, () -> orderService.addOrderItem(1L, orderItem));
+    }
     @Test
     public void testRemoveOrderItem() {
         Order order = new Order();
@@ -142,5 +227,13 @@ public class OrderServiceTest {
         Order result = orderService.removeOrderItem(1L, 1L);
         assertFalse(result.getItems().contains(orderItem));
         verify(menuItemService).updateMenuItemStock(1L, 5);
+    }
+    
+    @Test
+    public void testRemoveNonExistentOrderItem() {
+        Order order = new Order();
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+        assertThrows(IllegalArgumentException.class, () -> orderService.removeOrderItem(1L, 999L));
     }
 }

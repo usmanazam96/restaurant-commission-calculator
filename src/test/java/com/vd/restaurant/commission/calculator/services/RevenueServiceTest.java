@@ -7,6 +7,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +58,14 @@ public class RevenueServiceTest {
         double result = revenueService.calculateTotalRevenue();
         assertEquals(45.0, result);
     }
+    
+    @Test
+    public void testCalculateTotalRevenueWithNoOrders() {
+        when(orderService.getAllOrders()).thenReturn(Collections.emptyList());
+
+        double result = revenueService.calculateTotalRevenue();
+        assertEquals(0.0, result);
+    }
 
     @Test
     public void testCalculateTotalCommissionedRevenue() {
@@ -67,6 +76,15 @@ public class RevenueServiceTest {
         assertEquals(12.0, result);
     }
     
+
+    @Test
+    public void testCalculateTotalCommissionedRevenueWithNoOrders() {
+        RevenueService spyService = spy(revenueService);
+        doReturn(0.0).when(spyService).calculateTotalRevenue();
+
+        double result = spyService.calculateTotalCommissionedRevenue();
+        assertEquals(0.0, result);
+    }
     @Test
     public void testCalculateRevenueOfOrder() {
         MenuItem menuItem1 = new MenuItem();

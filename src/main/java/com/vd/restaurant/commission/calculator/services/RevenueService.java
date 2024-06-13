@@ -2,16 +2,17 @@ package com.vd.restaurant.commission.calculator.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.vd.restaurant.commission.calculator.entities.Order;
 import com.vd.restaurant.commission.calculator.exceptions.OrderNotFoundException;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class RevenueService {
 	
-	@Autowired
     private OrderService orderService;	
 	
     public double calculateTotalRevenue() {

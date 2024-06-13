@@ -2,6 +2,7 @@ package com.vd.restaurant.commission.calculator.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
@@ -55,13 +56,20 @@ public class MenuItemServiceTest {
     }
 
     @Test
-    public void testGetMenuItemById() {
+    public void testGetMenuItemByExistentId() {
         MenuItem menuItem = new MenuItem();
         when(menuItemRepository.findById(1L)).thenReturn(Optional.of(menuItem));
 
         Optional<MenuItem> result = menuItemService.getMenuItemById(1L);
         assertTrue(result.isPresent());
         assertEquals(menuItem, result.get());
+    }
+    
+    @Test
+    public void testGetMenuItemByNonExistentId() {
+        when(menuItemRepository.findById(1L)).thenReturn(Optional.empty());
+        Optional<MenuItem> result = menuItemService.getMenuItemById(1L);
+        assertFalse(result.isPresent());
     }
 
     @Test
@@ -80,7 +88,7 @@ public class MenuItemServiceTest {
     }
 
     @Test
-    public void testUpdateMenuItemStock() {
+    public void testUpdateMenuItemStockDecrease() {
         MenuItem menuItem = new MenuItem();
         menuItem.setStock(10);
         when(menuItemRepository.findById(1L)).thenReturn(Optional.of(menuItem));
@@ -91,4 +99,23 @@ public class MenuItemServiceTest {
 
         assertThrows(InvalidStockException.class, () -> menuItemService.updateMenuItemStock(1L, -6));
     }
+    
+    @Test
+    public void testUpdateMenuItemStockIncrease() {
+        MenuItem menuItem = new MenuItem();
+        menuItem.setStock(10);
+        when(menuItemRepository.findById(1L)).thenReturn(Optional.of(menuItem));
+        when(menuItemRepository.save(menuItem)).thenReturn(menuItem);
+
+        MenuItem result = menuItemService.updateMenuItemStock(1L, 5);
+        assertEquals(15, result.getStock());
+    }
+    
+    @Test
+    public void testUpdateMenuItemStockNonExistentItem() {
+        when(menuItemRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(MenuItemNotFoundException.class, () -> menuItemService.updateMenuItemStock(1L, 5));
+    }
+
 }

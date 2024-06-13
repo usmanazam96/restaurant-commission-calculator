@@ -40,19 +40,19 @@ The service allows adding menu items, managing stock, creating orders, and calcu
 
 #### MenuController
 
-- **POST /menu/add**: Adds a new `MenuItem` to the menu. Expects a `MenuItem` object in the request body. Returns the created `MenuItem` with status 201 Created.
+- **POST /menu**: Adds a new `MenuItem` to the menu. Expects a `MenuItem` object in the request body. Returns the created `MenuItem` with status 201 Created.
 - **GET /menu/all**: Retrieves all menu items. Returns a list of `MenuItems` with status 200 OK.
 - **GET /menu/{id}**: Retrieves a `MenuItem` by its ID. Returns the `MenuItem` with status 200 OK if found, 404 Not Found if not found.
 - **DELETE /menu/{id}**: Deletes a `MenuItem` by its ID. Returns status 204 No Content if deleted, 404 Not Found if not found.
 
 #### OrderController
 
-- **POST /orders/create**: Creates a new `Order`. Expects an `Order` object in the request body. Returns the created `Order` with status 201 Created.
-- **GET /orders/all**: Retrieves all orders. Returns a list of `Orders` with status 200 OK.
+- **POST /orders**: Creates a new `Order`. Expects an `Order` object in the request body. Returns the created `Order` with status 201 Created.
+- **GET /orders**: Retrieves all orders. Returns a list of `Orders` with status 200 OK.
 - **GET /orders/{id}**: Retrieves an `Order` by its ID. Returns the `Order` with status 200 OK if found, 404 Not Found if not found.
 - **DELETE /orders/{id}**: Deletes an `Order` by its ID. Returns status 204 No Content if deleted, 404 Not Found if not found.
-- **POST /orders/{orderId}/addItem**: Adds an `OrderItem` to an existing `Order`. Expects an `OrderItem` object in the request body and `orderId` in the path. Returns the updated `Order` with status 200 OK if the order exists, 404 Not Found if the order does not exist.
-- **POST /orders/{orderId}/removeItem/{orderItemId}**: Removes an `OrderItem` from an existing `Order`. Expects `orderId` and `orderItemId` in the path. Returns the updated `Order` with status 200 OK if the order and order item exist, 404 Not Found if the order or order item does not exist.
+- **PUT /orders/{orderId}/add-item**: Adds an `OrderItem` to an existing `Order`. Expects an `OrderItem` object in the request body and `orderId` in the path. Returns the updated `Order` with status 200 OK if the order exists, 404 Not Found if the order does not exist.
+- **DELETE /orders/{orderId}/remove-item/{orderItemId}**: Removes an `OrderItem` from an existing `Order`. Expects `orderId` and `orderItemId` in the path. Returns the updated `Order` with status 200 OK if the order and order item exist, 404 Not Found if the order or order item does not exist.
 
 #### RevenueController
 
