@@ -1,4 +1,4 @@
-# My Spring Boot Application
+# restaurant-commission-calculator
 
 This service manages a restaurant's menu, orders, and revenue. It uses an in-memory H2 database for data storage and is built with Spring Data JPA. Testing is done with JUnit 5 and Mockito, and Lombok is used for reducing boilerplate code. The application is built using Maven and Java 21.
 
