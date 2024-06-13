@@ -41,7 +41,7 @@ The service allows adding menu items, managing stock, creating orders, and calcu
 #### MenuController
 
 - **POST /menu**: Adds a new `MenuItem` to the menu. Expects a `MenuItem` object in the request body. Returns the created `MenuItem` with status 201 Created.
-- **GET /menu/all**: Retrieves all menu items. Returns a list of `MenuItems` with status 200 OK.
+- **GET /menu**: Retrieves all menu items. Returns a list of `MenuItems` with status 200 OK.
 - **GET /menu/{id}**: Retrieves a `MenuItem` by its ID. Returns the `MenuItem` with status 200 OK if found, 404 Not Found if not found.
 - **DELETE /menu/{id}**: Deletes a `MenuItem` by its ID. Returns status 204 No Content if deleted, 404 Not Found if not found.
 
